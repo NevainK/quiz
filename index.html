@@ -1,544 +1,2108 @@
-<!DOCTYPE html>
+c<!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport"
-          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+          content="width=device-width,
+                   initial-scale=1,
+                   maximum-scale=1,
+                   user-scalable=no">
+
+    <meta name="theme-color" content="#3478f6">
 
     <title>我的刷题</title>
 
     <link rel="manifest" href="./manifest.json">
 
     <style>
+
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            background: #f5f6f8;
-            font-family: Arial, "Microsoft YaHei", sans-serif;
+            background: #f4f5f7;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Microsoft YaHei",
+                sans-serif;
+
             color: #222;
         }
 
         .container {
-            max-width: 700px;
-            margin: auto;
-            padding: 16px;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 15px;
         }
 
         .card {
             background: white;
+
             border-radius: 14px;
+
             padding: 18px;
+
             margin-bottom: 14px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+
+            box-shadow:
+                0 2px 10px
+                rgba(0, 0, 0, 0.06);
         }
 
-        h2 {
+        h1,
+        h2,
+        h3 {
             margin-top: 0;
         }
 
-        .progress {
-            color: #666;
-            margin-bottom: 12px;
+        .title {
+            text-align: center;
         }
 
-        .type {
-            display: inline-block;
-            background: #eef3ff;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 13px;
+        .bank-button {
+
+            width: 100%;
+
+            display: block;
+
+            padding: 16px;
+
+            margin: 10px 0;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #3478f6;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        .bank-button:hover {
+            opacity: 0.9;
+        }
+
+        .progress {
+
+            color: #666;
+
+            font-size: 14px;
+
             margin-bottom: 10px;
         }
 
+        .type {
+
+            display: inline-block;
+
+            background: #eaf1ff;
+
+            color: #3478f6;
+
+            padding: 4px 9px;
+
+            border-radius: 6px;
+
+            font-size: 13px;
+
+            margin-bottom: 12px;
+        }
+
         .question {
+
             font-size: 18px;
+
             line-height: 1.7;
-            margin-bottom: 16px;
+
+            margin-bottom: 18px;
+
+            white-space: pre-wrap;
         }
 
         .option {
+
             display: block;
-            padding: 13px;
+
+            padding: 13px 12px;
+
             margin: 9px 0;
+
             border: 1px solid #ddd;
+
             border-radius: 9px;
+
             cursor: pointer;
+
             line-height: 1.5;
+
+            transition: 0.15s;
         }
 
         .option:hover {
-            background: #f5f7ff;
+
+            background: #f3f6ff;
+
+            border-color: #9ab9ff;
+        }
+
+        .option input {
+
+            margin-right: 7px;
+
+            transform: scale(1.2);
         }
 
         button {
+
             border: none;
+
             border-radius: 8px;
-            padding: 12px 16px;
+
+            padding: 11px 14px;
+
             font-size: 15px;
+
             cursor: pointer;
+
             margin: 4px;
         }
 
         .primary {
+
             background: #3478f6;
+
             color: white;
         }
 
         .secondary {
-            background: #e9e9e9;
+
+            background: #e8e8e8;
+
+            color: #222;
         }
 
         .danger {
-            background: #ffdddd;
+
+            background: #ffe1e1;
+
+            color: #b00020;
         }
 
-        #result {
-            margin-top: 18px;
-            padding: 14px;
-            border-radius: 9px;
-            line-height: 1.7;
-            display: none;
-        }
+        .success {
 
-        .correct {
-            background: #e8f8ec;
-        }
+            background: #e7f7ea;
 
-        .wrong {
-            background: #ffecec;
-        }
-
-        .analysis {
-            margin-top: 10px;
+            color: #14752b;
         }
 
         .toolbar {
+
             display: flex;
-            justify-content: space-between;
+
             flex-wrap: wrap;
+
+            gap: 7px;
+
+            justify-content: center;
         }
 
-        #quiz {
+        .toolbar button {
+
+            flex: 1;
+
+            min-width: 90px;
+        }
+
+        #result {
+
             display: none;
+
+            margin-top: 18px;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            line-height: 1.7;
         }
 
-        input[type=file] {
-            margin: 15px 0;
-            width: 100%;
+        .correct {
+
+            background: #e7f7ea;
+
+            border: 1px solid #a4deb0;
+        }
+
+        .wrong {
+
+            background: #ffebeb;
+
+            border: 1px solid #f4abab;
+        }
+
+        .analysis {
+
+            margin-top: 12px;
+
+            padding-top: 12px;
+
+            border-top: 1px solid rgba(0,0,0,.1);
+        }
+
+        .analysis-content {
+
+            margin-top: 7px;
+
+            white-space: pre-wrap;
+        }
+
+        .stats {
+
+            display: flex;
+
+            justify-content: space-around;
+
+            text-align: center;
+
+            margin-top: 15px;
+        }
+
+        .stats-item {
+
+            flex: 1;
+        }
+
+        .stats-number {
+
+            display: block;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            color: #3478f6;
+        }
+
+        .stats-label {
+
+            font-size: 12px;
+
+            color: #777;
+        }
+
+        .bank-title {
+
+            font-size: 14px;
+
+            color: #666;
+
+            margin-bottom: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message {
+
+            text-align: center;
+
+            color: #777;
+
+            padding: 20px;
+        }
+
+        .wrong-tag {
+
+            color: #d32f2f;
+
+            font-weight: bold;
+
+            margin-left: 8px;
         }
 
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
-    <div class="card" id="loader">
-        <h2>我的刷题</h2>
 
-        <p>选择题库 JSON 文件：</p>
+    <!-- =========================
+         题库首页
+    ========================== -->
 
-        <input type="file"
-               id="fileInput"
-               accept=".json">
-
-        <p id="loadInfo"></p>
-    </div>
-
-
-    <div id="quiz">
+    <div id="bankPage">
 
         <div class="card">
 
-            <div class="progress" id="progress"></div>
+            <h2 class="title">
+                我的刷题
+            </h2>
 
-            <div class="type" id="type"></div>
+            <p style="text-align:center;color:#777;">
+                请选择题库
+            </p>
 
-            <div class="question" id="question"></div>
+            <div id="bankList">
 
-            <div id="options"></div>
+                <div class="message">
+                    正在加载题库列表...
+                </div>
 
-            <button class="primary" onclick="submitAnswer()">
-                提交答案
-            </button>
-
-            <div id="result"></div>
-
-        </div>
-
-
-        <div class="card toolbar">
-
-            <button class="secondary" onclick="prevQuestion()">
-                上一题
-            </button>
-
-            <button class="secondary" onclick="randomQuestion()">
-                随机一题
-            </button>
-
-            <button class="secondary" onclick="nextQuestion()">
-                下一题
-            </button>
+            </div>
 
         </div>
 
     </div>
+
+
+    <!-- =========================
+         刷题页面
+    ========================== -->
+
+    <div id="quizPage"
+         class="hidden">
+
+
+        <!-- 顶部 -->
+
+        <div class="card">
+
+            <div class="bank-title"
+                 id="currentBankName">
+            </div>
+
+
+            <div class="toolbar">
+
+                <button
+                    class="secondary"
+                    onclick="backToBanks()">
+
+                    切换题库
+
+                </button>
+
+
+                <button
+                    class="danger"
+                    onclick="startWrongMode()">
+
+                    错题练习
+
+                </button>
+
+
+                <button
+                    class="secondary"
+                    onclick="exitWrongMode()"
+                    id="exitWrongButton"
+                    style="display:none">
+
+                    返回全部题目
+
+                </button>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stats-item">
+
+                    <span
+                        class="stats-number"
+                        id="doneCount">
+
+                        0
+
+                    </span>
+
+                    <span class="stats-label">
+                        已答
+                    </span>
+
+                </div>
+
+
+                <div class="stats-item">
+
+                    <span
+                        class="stats-number"
+                        id="correctCount">
+
+                        0
+
+                    </span>
+
+                    <span class="stats-label">
+                        正确
+                    </span>
+
+                </div>
+
+
+                <div class="stats-item">
+
+                    <span
+                        class="stats-number"
+                        id="wrongCount">
+
+                        0
+
+                    </span>
+
+                    <span class="stats-label">
+                        错题
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 题目 -->
+
+        <div class="card">
+
+
+            <div
+                class="progress"
+                id="progress">
+            </div>
+
+
+            <div
+                class="type"
+                id="type">
+            </div>
+
+
+            <span
+                id="wrongTag"
+                class="wrong-tag">
+            </span>
+
+
+            <div
+                class="question"
+                id="question">
+            </div>
+
+
+            <div
+                id="options">
+            </div>
+
+
+            <button
+                class="primary"
+                onclick="submitAnswer()"
+                id="submitButton">
+
+                提交答案
+
+            </button>
+
+
+            <div
+                id="result">
+            </div>
+
+
+        </div>
+
+
+        <!-- 底部操作 -->
+
+        <div class="card">
+
+            <div class="toolbar">
+
+
+                <button
+                    class="secondary"
+                    onclick="prevQuestion()">
+
+                    上一题
+
+                </button>
+
+
+                <button
+                    class="secondary"
+                    onclick="randomQuestion()">
+
+                    随机题
+
+                </button>
+
+
+                <button
+                    class="primary"
+                    onclick="nextQuestion()">
+
+                    下一题
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
 
 </div>
 
 
 <script>
 
+
+/* =====================================================
+   全局变量
+===================================================== */
+
+
+let banks = [];
+
 let questions = [];
+
+let currentQuestions = [];
+
 let current = 0;
 
-let wrongQuestions = new Set(
-    JSON.parse(localStorage.getItem("wrongQuestions") || "[]")
+let currentBank = "";
+
+let currentBankName = "";
+
+let wrongMode = false;
+
+
+/* =====================================================
+   页面启动
+===================================================== */
+
+
+window.addEventListener(
+    "load",
+
+    async function () {
+
+        await loadBanks();
+
+    }
 );
 
 
-// ================================
-// 导入 JSON
-// ================================
-
-document.getElementById("fileInput")
-.addEventListener("change", function(event) {
-
-    const file = event.target.files[0];
-
-    if (!file)
-        return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-
-        try {
-
-            const data = JSON.parse(e.target.result);
-
-            if (!data.questions ||
-                !Array.isArray(data.questions)) {
-
-                alert("不是支持的题库格式");
-                return;
-            }
-
-            questions = data.questions;
-
-            // 保存题库
-            localStorage.setItem(
-                "questionBank",
-                JSON.stringify(data)
-            );
-
-            current =
-                Number(
-                    localStorage.getItem("currentQuestion") || 0
-                );
-
-            if (current >= questions.length)
-                current = 0;
-
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("quiz").style.display = "block";
-
-            renderQuestion();
-
-        }
-        catch(err) {
-
-            alert("JSON 文件解析失败");
-
-            console.error(err);
-        }
-
-    };
-
-    reader.readAsText(file);
-
-});
+/* =====================================================
+   加载 banks.json
+===================================================== */
 
 
-// ================================
-// 页面加载时恢复题库
-// ================================
-
-window.addEventListener("load", function() {
-
-    const saved =
-        localStorage.getItem("questionBank");
-
-    if (!saved)
-        return;
+async function loadBanks() {
 
     try {
 
-        const data = JSON.parse(saved);
-
-        questions = data.questions;
-
-        current =
-            Number(
-                localStorage.getItem("currentQuestion") || 0
+        const response =
+            await fetch(
+                "./banks.json",
+                {
+                    cache: "no-store"
+                }
             );
 
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("quiz").style.display = "block";
 
-        renderQuestion();
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+
+        banks =
+            await response.json();
+
+
+        if (!Array.isArray(banks)) {
+
+            throw new Error(
+                "banks.json 格式错误"
+            );
+
+        }
+
+
+        renderBankList();
+
 
     }
-    catch(e) {
+    catch (error) {
 
-        localStorage.removeItem("questionBank");
+        console.error(error);
+
+
+        document.getElementById(
+            "bankList"
+        ).innerHTML = `
+
+            <div class="message">
+
+                题库列表加载失败
+
+                <br><br>
+
+                请检查 banks.json
+
+            </div>
+
+        `;
 
     }
 
-});
+}
 
 
-// ================================
-// 显示题目
-// ================================
 
-function renderQuestion() {
+/* =====================================================
+   显示题库列表
+===================================================== */
 
-    if (!questions.length)
-        return;
 
-    const q = questions[current];
+function renderBankList() {
 
-    document.getElementById("progress").textContent =
-        `第 ${current + 1} / ${questions.length} 题`;
 
-    document.getElementById("type").textContent =
-        q.type;
-
-    document.getElementById("question").textContent =
-        q.question;
-
-    const options =
-        document.getElementById("options");
-
-    options.innerHTML = "";
-
-    const multi =
-        q.type === "多选题" ||
-        q.answer.length > 1;
-
-    q.options.forEach(option => {
-
-        const label =
-            document.createElement("label");
-
-        label.className = "option";
-
-        const input =
-            document.createElement("input");
-
-        input.type =
-            multi ? "checkbox" : "radio";
-
-        input.name = "answer";
-
-        input.value =
-            option.label;
-
-        label.appendChild(input);
-
-        label.append(
-            ` ${option.label}. ${option.content}`
+    const container =
+        document.getElementById(
+            "bankList"
         );
 
-        options.appendChild(label);
 
-    });
+    container.innerHTML = "";
 
-    const result =
-        document.getElementById("result");
 
-    result.style.display = "none";
-    result.innerHTML = "";
+    if (banks.length === 0) {
 
-    localStorage.setItem(
-        "currentQuestion",
-        current
+        container.innerHTML = `
+
+            <div class="message">
+
+                暂无题库
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    banks.forEach(
+
+        bank => {
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "bank-button";
+
+
+            button.textContent =
+                bank.name;
+
+
+            button.onclick =
+                function () {
+
+                    loadQuestionBank(
+                        bank
+                    );
+
+                };
+
+
+            container.appendChild(
+                button
+            );
+
+        }
+
     );
 
 }
 
 
-// ================================
-// 提交答案
-// ================================
 
-function submitAnswer() {
+/* =====================================================
+   加载指定题库
+===================================================== */
 
-    const q = questions[current];
 
-    const selected =
-        [...document.querySelectorAll(
-            'input[name="answer"]:checked'
-        )]
-        .map(x => x.value)
-        .sort()
-        .join("");
+async function loadQuestionBank(bank) {
 
-    if (!selected) {
 
-        alert("请先选择答案");
+    try {
+
+
+        const response =
+            await fetch(
+                "./" + bank.file,
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.questions ||
+            !Array.isArray(
+                data.questions
+            )
+        ) {
+
+            throw new Error(
+                "题库缺少 questions 数组"
+            );
+
+        }
+
+
+        questions =
+            data.questions;
+
+
+        currentQuestions =
+            questions;
+
+
+        currentBank =
+            bank.file;
+
+
+        currentBankName =
+            bank.name;
+
+
+        wrongMode =
+            false;
+
+
+        document.getElementById(
+            "exitWrongButton"
+        ).style.display =
+            "none";
+
+
+        /*
+         * 每个题库独立恢复进度
+         */
+
+
+        current =
+            Number(
+
+                localStorage.getItem(
+
+                    progressKey()
+
+                ) || 0
+
+            );
+
+
+        if (
+            current < 0 ||
+            current >=
+            currentQuestions.length
+        ) {
+
+            current = 0;
+
+        }
+
+
+        localStorage.setItem(
+            "lastBank",
+            currentBank
+        );
+
+
+        showQuizPage();
+
+
+        renderQuestion();
+
+
+        updateStats();
+
+
+    }
+    catch (error) {
+
+
+        console.error(error);
+
+
+        alert(
+
+            "题库加载失败：\n" +
+            bank.file
+
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   页面切换
+===================================================== */
+
+
+function showQuizPage() {
+
+
+    document.getElementById(
+        "bankPage"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "quizPage"
+    ).classList.remove(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "currentBankName"
+    ).textContent =
+        currentBankName;
+
+}
+
+
+
+function backToBanks() {
+
+
+    wrongMode = false;
+
+
+    questions = [];
+
+    currentQuestions = [];
+
+    current = 0;
+
+
+    document.getElementById(
+        "quizPage"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "bankPage"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =====================================================
+   localStorage Key
+===================================================== */
+
+
+function progressKey() {
+
+    return (
+        "progress_" +
+        currentBank
+    );
+
+}
+
+
+function wrongKey() {
+
+    return (
+        "wrong_" +
+        currentBank
+    );
+
+}
+
+
+function answeredKey() {
+
+    return (
+        "answered_" +
+        currentBank
+    );
+
+}
+
+
+function correctKey() {
+
+    return (
+        "correct_" +
+        currentBank
+    );
+
+}
+
+
+
+/* =====================================================
+   获取错题
+===================================================== */
+
+
+function getWrongQuestions() {
+
+
+    const data =
+        localStorage.getItem(
+            wrongKey()
+        );
+
+
+    if (!data) {
+
+        return new Set();
+
+    }
+
+
+    try {
+
+        return new Set(
+            JSON.parse(data)
+        );
+
+    }
+    catch {
+
+        return new Set();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   保存错题
+===================================================== */
+
+
+function saveWrongQuestions(
+    wrongSet
+) {
+
+
+    localStorage.setItem(
+
+        wrongKey(),
+
+        JSON.stringify(
+            [...wrongSet]
+        )
+
+    );
+
+}
+
+
+
+/* =====================================================
+   已答题记录
+===================================================== */
+
+
+function getAnsweredQuestions() {
+
+
+    try {
+
+        return new Set(
+
+            JSON.parse(
+
+                localStorage.getItem(
+                    answeredKey()
+                ) || "[]"
+
+            )
+
+        );
+
+    }
+    catch {
+
+        return new Set();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   正确题记录
+===================================================== */
+
+
+function getCorrectQuestions() {
+
+
+    try {
+
+        return new Set(
+
+            JSON.parse(
+
+                localStorage.getItem(
+                    correctKey()
+                ) || "[]"
+
+            )
+
+        );
+
+    }
+    catch {
+
+        return new Set();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   当前题目的唯一 ID
+===================================================== */
+
+
+function getQuestionId(q) {
+
+
+    /*
+     * 优先使用 number
+     *
+     * 如果以后某些题库没有 number，
+     * 就使用题干作为ID
+     */
+
+
+    if (
+        q.number !== undefined &&
+        q.number !== null
+    ) {
+
+        return String(
+            q.number
+        );
+
+    }
+
+
+    return q.question;
+
+}
+
+
+
+/* =====================================================
+   渲染题目
+===================================================== */
+
+
+function renderQuestion() {
+
+
+    if (
+        !currentQuestions ||
+        currentQuestions.length === 0
+    ) {
+
+        alert(
+            "当前没有题目"
+        );
+
         return;
 
     }
 
-    const correct =
-        q.answer
-        .split("")
-        .sort()
-        .join("");
 
-    const isCorrect =
-        selected === correct;
+    if (
+        current >=
+        currentQuestions.length
+    ) {
+
+        current = 0;
+
+    }
+
+
+    if (
+        current < 0
+    ) {
+
+        current =
+            currentQuestions.length - 1;
+
+    }
+
+
+    const q =
+        currentQuestions[current];
+
+
+    /*
+     * 进度
+     */
+
+
+    document.getElementById(
+        "progress"
+    ).textContent =
+
+        wrongMode
+
+        ?
+
+        `错题练习：第 ${current + 1} / ${currentQuestions.length} 题`
+
+        :
+
+        `第 ${current + 1} / ${currentQuestions.length} 题`;
+
+
+    /*
+     * 题型
+     */
+
+
+    document.getElementById(
+        "type"
+    ).textContent =
+        q.type || "选择题";
+
+
+    /*
+     * 题干
+     */
+
+
+    document.getElementById(
+        "question"
+    ).textContent =
+        q.question;
+
+
+    /*
+     * 错题标记
+     */
+
+
+    const wrongSet =
+        getWrongQuestions();
+
+
+    const id =
+        getQuestionId(q);
+
+
+    document.getElementById(
+        "wrongTag"
+    ).textContent =
+
+        wrongSet.has(id)
+
+        ?
+
+        "错题"
+
+        :
+
+        "";
+
+
+    /*
+     * 选项
+     */
+
+
+    const optionsContainer =
+        document.getElementById(
+            "options"
+        );
+
+
+    optionsContainer.innerHTML =
+        "";
+
+
+    /*
+     * 判断是否多选
+     */
+
+
+    const isMulti =
+
+        q.type === "多选题"
+
+        ||
+
+        (
+            typeof q.answer ===
+            "string"
+
+            &&
+
+            q.answer.length > 1
+        );
+
+
+    q.options.forEach(
+
+        option => {
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+
+            label.className =
+                "option";
+
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+
+                isMulti
+
+                ?
+
+                "checkbox"
+
+                :
+
+                "radio";
+
+
+            input.name =
+                "answer";
+
+
+            input.value =
+                option.label;
+
+
+            label.appendChild(
+                input
+            );
+
+
+            const text =
+                document.createTextNode(
+
+                    " " +
+                    option.label +
+                    ". " +
+                    option.content
+
+                );
+
+
+            label.appendChild(
+                text
+            );
+
+
+            optionsContainer.appendChild(
+                label
+            );
+
+        }
+
+    );
+
+
+    /*
+     * 清空上一次结果
+     */
+
 
     const result =
-        document.getElementById("result");
+        document.getElementById(
+            "result"
+        );
 
-    result.style.display = "block";
+
+    result.style.display =
+        "none";
+
+
+    result.innerHTML =
+        "";
+
+
+    /*
+     * 恢复提交按钮
+     */
+
+
+    document.getElementById(
+        "submitButton"
+    ).disabled =
+        false;
+
+
+    /*
+     * 正常模式才保存进度
+     */
+
+
+    if (!wrongMode) {
+
+        localStorage.setItem(
+
+            progressKey(),
+
+            current
+
+        );
+
+    }
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+
+/* =====================================================
+   提交答案
+===================================================== */
+
+
+function submitAnswer() {
+
+
+    const q =
+        currentQuestions[current];
+
+
+    const selected =
+
+        [
+            ...document.querySelectorAll(
+                'input[name="answer"]:checked'
+            )
+        ]
+
+        .map(
+            item =>
+                item.value
+        )
+
+        .sort()
+
+        .join("");
+
+
+    if (!selected) {
+
+        alert(
+            "请先选择答案"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * 标准答案排序
+     */
+
+
+    const correctAnswer =
+
+        String(
+            q.answer || ""
+        )
+
+        .split("")
+
+        .sort()
+
+        .join("");
+
+
+    const isCorrect =
+
+        selected ===
+        correctAnswer;
+
+
+    /*
+     * 题目ID
+     */
+
+
+    const id =
+        getQuestionId(q);
+
+
+    /*
+     * 已答记录
+     */
+
+
+    const answeredSet =
+        getAnsweredQuestions();
+
+
+    answeredSet.add(id);
+
+
+    localStorage.setItem(
+
+        answeredKey(),
+
+        JSON.stringify(
+            [...answeredSet]
+        )
+
+    );
+
+
+    /*
+     * 正确记录
+     */
+
+
+    const correctSet =
+        getCorrectQuestions();
+
+
+    /*
+     * 错题记录
+     */
+
+
+    const wrongSet =
+        getWrongQuestions();
+
 
     if (isCorrect) {
 
-        result.className = "correct";
 
-        result.innerHTML =
-            "<b>回答正确 ✓</b>";
+        correctSet.add(id);
 
-        wrongQuestions.delete(q.number);
+
+        /*
+         * 答对后从错题本移除
+         */
+
+
+        wrongSet.delete(id);
 
     }
     else {
 
-        result.className = "wrong";
 
-        result.innerHTML =
-            "<b>回答错误 ✗</b>";
-
-        wrongQuestions.add(q.number);
-
-    }
-
-    const answer =
-        document.createElement("div");
-
-    answer.innerHTML =
-        `<br><b>正确答案：</b>${q.answer}`;
-
-    result.appendChild(answer);
+        correctSet.delete(id);
 
 
-    if (q.analysis) {
-
-        const analysis =
-            document.createElement("div");
-
-        analysis.className = "analysis";
-
-        analysis.innerHTML =
-            "<b>解析：</b>";
-
-        const content =
-            document.createElement("div");
-
-        content.textContent =
-            q.analysis;
-
-        analysis.appendChild(content);
-
-        result.appendChild(analysis);
+        wrongSet.add(id);
 
     }
 
 
     localStorage.setItem(
-        "wrongQuestions",
-        JSON.stringify([...wrongQuestions])
+
+        correctKey(),
+
+        JSON.stringify(
+            [...correctSet]
+        )
+
     );
+
+
+    saveWrongQuestions(
+        wrongSet
+    );
+
+
+    /*
+     * 显示结果
+     */
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    result.className =
+
+        isCorrect
+
+        ?
+
+        "correct"
+
+        :
+
+        "wrong";
+
+
+    result.innerHTML =
+        "";
+
+
+    const state =
+        document.createElement(
+            "div"
+        );
+
+
+    state.innerHTML =
+
+        isCorrect
+
+        ?
+
+        "<b>回答正确 ✓</b>"
+
+        :
+
+        "<b>回答错误 ✗</b>";
+
+
+    result.appendChild(
+        state
+    );
+
+
+    /*
+     * 用户答案
+     */
+
+
+    const yourAnswer =
+        document.createElement(
+            "div"
+        );
+
+
+    yourAnswer.innerHTML =
+
+        "<br><b>你的答案：</b>" +
+        selected;
+
+
+    result.appendChild(
+        yourAnswer
+    );
+
+
+    /*
+     * 正确答案
+     */
+
+
+    const answerElement =
+        document.createElement(
+            "div"
+        );
+
+
+    answerElement.innerHTML =
+
+        "<b>正确答案：</b>" +
+        q.answer;
+
+
+    result.appendChild(
+        answerElement
+    );
+
+
+    /*
+     * 解析
+     */
+
+
+    if (q.analysis) {
+
+
+        const analysis =
+            document.createElement(
+                "div"
+            );
+
+
+        analysis.className =
+            "analysis";
+
+
+        const title =
+            document.createElement(
+                "b"
+            );
+
+
+        title.textContent =
+            "解析：";
+
+
+        const content =
+            document.createElement(
+                "div"
+            );
+
+
+        content.className =
+            "analysis-content";
+
+
+        content.textContent =
+            q.analysis;
+
+
+        analysis.appendChild(
+            title
+        );
+
+
+        analysis.appendChild(
+            content
+        );
+
+
+        result.appendChild(
+            analysis
+        );
+
+    }
+
+
+    /*
+     * 防止重复提交
+     */
+
+
+    document.getElementById(
+        "submitButton"
+    ).disabled =
+        true;
+
+
+    updateStats();
 
 }
 
 
-// ================================
-// 下一题
-// ================================
+
+/* =====================================================
+   下一题
+===================================================== */
+
 
 function nextQuestion() {
 
-    if (current < questions.length - 1) {
 
-        current++;
+    if (
+        currentQuestions.length === 0
+    ) {
 
-        renderQuestion();
-
-        window.scrollTo(0,0);
-
-    }
-
-}
-
-
-// ================================
-// 上一题
-// ================================
-
-function prevQuestion() {
-
-    if (current > 0) {
-
-        current--;
-
-        renderQuestion();
-
-        window.scrollTo(0,0);
+        return;
 
     }
 
-}
+
+    current++;
 
 
-// ================================
-// 随机题
-// ================================
+    if (
+        current >=
+        currentQuestions.length
+    ) {
 
-function randomQuestion() {
+        current = 0;
 
-    current =
-        Math.floor(
-            Math.random() * questions.length
-        );
+    }
+
 
     renderQuestion();
 
-    window.scrollTo(0,0);
+}
+
+
+
+/* =====================================================
+   上一题
+===================================================== */
+
+
+function prevQuestion() {
+
+
+    if (
+        currentQuestions.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    current--;
+
+
+    if (
+        current < 0
+    ) {
+
+        current =
+            currentQuestions.length - 1;
+
+    }
+
+
+    renderQuestion();
 
 }
 
 
-// ================================
-// 注册 Service Worker
-// ================================
 
-if ("serviceWorker" in navigator) {
+/* =====================================================
+   随机题
+===================================================== */
 
-    navigator.serviceWorker.register("./sw.js");
+
+function randomQuestion() {
+
+
+    if (
+        currentQuestions.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        currentQuestions.length === 1
+    ) {
+
+        current = 0;
+
+    }
+    else {
+
+
+        let randomIndex;
+
+
+        do {
+
+            randomIndex =
+                Math.floor(
+
+                    Math.random() *
+                    currentQuestions.length
+
+                );
+
+        }
+        while (
+            randomIndex === current
+        );
+
+
+        current =
+            randomIndex;
+
+    }
+
+
+    renderQuestion();
 
 }
+
+
+
+/* =====================================================
+   错题模式
+===================================================== */
+
+
+function startWrongMode() {
+
+
+    const wrongSet =
+        getWrongQuestions();
+
+
+    if (
+        wrongSet.size === 0
+    ) {
+
+        alert(
+            "当前题库暂无错题"
+        );
+
+        return;
+
+    }
+
+
+    const wrongQuestions =
+
+        questions.filter(
+
+            q =>
+                wrongSet.has(
+                    getQuestionId(q)
+                )
+
+        );
+
+
+    if (
+        wrongQuestions.length === 0
+    ) {
+
+        alert(
+            "暂无可练习错题"
+        );
+
+        return;
+
+    }
+
+
+    wrongMode =
+        true;
+
+
+    currentQuestions =
+        wrongQuestions;
+
+
+    current =
+        0;
+
+
+    document.getElementById(
+        "exitWrongButton"
+    ).style.display =
+        "inline-block";
+
+
+    renderQuestion();
+
+}
+
+
+
+/* =====================================================
+   退出错题模式
+===================================================== */
+
+
+function exitWrongMode() {
+
+
+    wrongMode =
+        false;
+
+
+    currentQuestions =
+        questions;
+
+
+    current =
+        Number(
+
+            localStorage.getItem(
+                progressKey()
+            ) || 0
+
+        );
+
+
+    if (
+        current >=
+        currentQuestions.length
+    ) {
+
+        current = 0;
+
+    }
+
+
+    document.getElementById(
+        "exitWrongButton"
+    ).style.display =
+        "none";
+
+
+    renderQuestion();
+
+}
+
+
+
+/* =====================================================
+   更新统计
+===================================================== */
+
+
+function updateStats() {
+
+
+    const answered =
+        getAnsweredQuestions();
+
+
+    const correct =
+        getCorrectQuestions();
+
+
+    const wrong =
+        getWrongQuestions();
+
+
+    document.getElementById(
+        "doneCount"
+    ).textContent =
+        answered.size;
+
+
+    document.getElementById(
+        "correctCount"
+    ).textContent =
+        correct.size;
+
+
+    document.getElementById(
+        "wrongCount"
+    ).textContent =
+        wrong.size;
+
+}
+
+
+
+/* =====================================================
+   注册 Service Worker
+===================================================== */
+
+
+if (
+    "serviceWorker"
+    in navigator
+) {
+
+
+    navigator
+        .serviceWorker
+        .register(
+            "./sw.js"
+        )
+        .catch(
+            error =>
+                console.error(
+                    "Service Worker 注册失败",
+                    error
+                )
+        );
+
+}
+
 
 </script>
 
+
 </body>
+
 </html>
