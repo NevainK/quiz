@@ -587,6 +587,8 @@ let banks = [];
 
 let questions = [];
 
+let materials = [];
+
 let currentQuestions = [];
 
 let current = 0;
@@ -811,6 +813,9 @@ async function loadQuestionBank(bank) {
 
         questions =
             data.questions;
+
+        materials =
+            Array.isArray(data.materials) ? data.materials : [];
 
 
         currentQuestions =
@@ -1140,6 +1145,19 @@ function getCorrectQuestions() {
 
 function getQuestionId(q) {
 
+    /*
+     * 材料题优先使用 questionId
+     */
+    if (
+        q.questionId !== undefined &&
+        q.questionId !== null
+    ) {
+
+        return String(
+            q.questionId
+        );
+
+    }
 
     /*
      * 优先使用 number
@@ -1164,6 +1182,31 @@ function getQuestionId(q) {
     return q.question;
 
 }
+
+/* =====================================================
+   根据题目查找对应材料
+===================================================== */
+
+function getQuestionMaterial(q) {
+
+    if (
+        q.materialId === undefined ||
+        q.materialId === null
+    ) {
+        return null;
+    }
+
+
+    return materials.find(
+
+        material =>
+            String(material.id) ===
+            String(q.materialId)
+
+    ) || null;
+
+}
+
 
 
 
@@ -1211,6 +1254,104 @@ function renderQuestion() {
 
     const q =
         currentQuestions[current];
+
+    /*
+     * ===============================
+     * 材料题显示
+     * ===============================
+     */
+
+    let materialBox =
+        document.getElementById(
+            "materialBox"
+        );
+
+
+    /*
+     * 第一次运行时自动创建，
+     * 因此 index.html 都不需要修改
+     */
+    if (!materialBox) {
+
+        materialBox =
+            document.createElement(
+                "div"
+            );
+
+        materialBox.id =
+            "materialBox";
+
+        materialBox.style.background =
+            "#f7f8fa";
+
+        materialBox.style.border =
+            "1px solid #e0e0e0";
+
+        materialBox.style.borderRadius =
+            "9px";
+
+        materialBox.style.padding =
+            "14px";
+
+        materialBox.style.marginBottom =
+            "16px";
+
+        materialBox.style.lineHeight =
+            "1.8";
+
+        materialBox.style.whiteSpace =
+            "pre-wrap";
+
+
+        const questionElement =
+            document.getElementById(
+                "question"
+            );
+
+
+        questionElement.parentNode.insertBefore(
+
+            materialBox,
+
+            questionElement
+
+        );
+
+    }
+
+
+    /*
+     * 查当前题对应材料
+     */
+
+    const material =
+        getQuestionMaterial(q);
+
+
+    if (material) {
+
+        materialBox.style.display =
+            "block";
+
+
+        materialBox.textContent =
+            material.content;
+
+    }
+    else {
+
+        /*
+         * 普通题隐藏
+         */
+
+        materialBox.style.display =
+            "none";
+
+
+        materialBox.textContent =
+            "";
+
+    }
 
 
     /*
@@ -1299,96 +1440,211 @@ function renderQuestion() {
 
 
     /*
-     * 判断是否多选
+     * 判断文字作答题
      */
 
+    const isTextQuestion =
 
-    const isMulti =
-
-        q.type === "多选题"
+        q.type === "简答题"
 
         ||
 
+        q.type === "填空题";
+
+
+    /*
+     * 判断多选
+     *
+     * 文字题不能再通过 answer.length 判断
+     */
+
+    const isMulti =
+
+        !isTextQuestion
+
+        &&
+
         (
-            typeof q.answer ===
-            "string"
+            q.type === "多选题"
 
-            &&
+            ||
 
-            q.answer.length > 1
+            (
+                typeof q.answer ===
+                "string"
+
+                &&
+
+                q.answer.length > 1
+            )
         );
 
 
-    q.options.forEach(
+    /*
+     * ===============================
+     * 简答题 / 填空题
+     * ===============================
+     */
 
-        option => {
-
-
-            const label =
-                document.createElement(
-                    "label"
-                );
+    if (isTextQuestion) {
 
 
-            label.className =
-                "option";
-
-
-            const input =
-                document.createElement(
-                    "input"
-                );
-
-
-            input.type =
-
-                isMulti
-
-                ?
-
-                "checkbox"
-
-                :
-
-                "radio";
-
-
-            input.name =
-                "answer";
-
-
-            input.value =
-                option.label;
-
-
-            label.appendChild(
-                input
+        const textarea =
+            document.createElement(
+                "textarea"
             );
 
 
-            const text =
-                document.createTextNode(
+        textarea.id =
+            "textAnswer";
 
-                    " " +
-                    option.label +
-                    ". " +
-                    option.content
 
+        textarea.placeholder =
+
+            q.type === "填空题"
+
+            ?
+
+            "请输入答案"
+
+            :
+
+            "请输入你的答案";
+
+
+        textarea.style.width =
+            "100%";
+
+
+        textarea.style.minHeight =
+
+            q.type === "填空题"
+
+            ?
+
+            "55px"
+
+            :
+
+            "130px";
+
+
+        textarea.style.padding =
+            "12px";
+
+
+        textarea.style.border =
+            "1px solid #ddd";
+
+
+        textarea.style.borderRadius =
+            "9px";
+
+
+        textarea.style.fontSize =
+            "16px";
+
+
+        textarea.style.lineHeight =
+            "1.6";
+
+
+        textarea.style.resize =
+            "vertical";
+
+
+        textarea.style.fontFamily =
+            "inherit";
+
+
+        optionsContainer.appendChild(
+            textarea
+        );
+
+    }
+
+
+    /*
+     * ===============================
+     * 原来的选择题
+     * ===============================
+     */
+
+    else {
+
+
+        q.options.forEach(
+
+            option => {
+
+
+                const label =
+                    document.createElement(
+                        "label"
+                    );
+
+
+                label.className =
+                    "option";
+
+
+                const input =
+                    document.createElement(
+                        "input"
+                    );
+
+
+                input.type =
+
+                    isMulti
+
+                    ?
+
+                    "checkbox"
+
+                    :
+
+                    "radio";
+
+
+                input.name =
+                    "answer";
+
+
+                input.value =
+                    option.label;
+
+
+                label.appendChild(
+                    input
                 );
 
 
-            label.appendChild(
-                text
-            );
+                const text =
+                    document.createTextNode(
+
+                        " " +
+                        option.label +
+                        ". " +
+                        option.content
+
+                    );
 
 
-            optionsContainer.appendChild(
-                label
-            );
+                label.appendChild(
+                    text
+                );
 
-        }
 
-    );
+                optionsContainer.appendChild(
+                    label
+                );
+
+            }
+
+        );
+
+    }
 
 
     /*
@@ -1415,10 +1671,29 @@ function renderQuestion() {
      */
 
 
-    document.getElementById(
-        "submitButton"
-    ).disabled =
-        false;
+    const submitButton =
+        document.getElementById(
+            "submitButton"
+        );
+
+    submitButton.disabled = false;
+
+
+    /*
+     * 简答题只查看参考答案
+     */
+    if (q.type === "简答题") {
+
+        submitButton.textContent =
+            "查看参考答案";
+
+    }
+    else {
+
+        submitButton.textContent =
+            "提交答案";
+
+    }
 
 
     /*
@@ -1447,6 +1722,220 @@ function renderQuestion() {
 }
 
 
+function showEssayAnswer(q) {
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    /*
+     * 简答题不使用 correct / wrong 样式
+     */
+
+    result.className = "";
+
+
+    result.style.background =
+        "#f7f8fa";
+
+
+    result.style.border =
+        "1px solid #ddd";
+
+
+    result.innerHTML =
+        "";
+
+
+    /*
+     * 如果用户输入了自己的答案，
+     * 就顺便显示出来。
+     *
+     * 没输入也没关系。
+     */
+
+    const textAnswer =
+        document.getElementById(
+            "textAnswer"
+        );
+
+
+    const userAnswer =
+        textAnswer
+            ? textAnswer.value.trim()
+            : "";
+
+
+    if (userAnswer) {
+
+
+        const yourAnswer =
+            document.createElement(
+                "div"
+            );
+
+
+        yourAnswer.innerHTML =
+            "<b>你的答案：</b>";
+
+
+        const yourContent =
+            document.createElement(
+                "div"
+            );
+
+
+        yourContent.style.whiteSpace =
+            "pre-wrap";
+
+
+        yourContent.style.marginTop =
+            "7px";
+
+
+        yourContent.textContent =
+            userAnswer;
+
+
+        yourAnswer.appendChild(
+            yourContent
+        );
+
+
+        result.appendChild(
+            yourAnswer
+        );
+
+    }
+
+
+    /*
+     * 参考答案
+     */
+
+    const answerElement =
+        document.createElement(
+            "div"
+        );
+
+
+    answerElement.style.marginTop =
+        userAnswer
+            ? "15px"
+            : "0";
+
+
+    answerElement.innerHTML =
+        "<b>参考答案：</b>";
+
+
+    const answerContent =
+        document.createElement(
+            "div"
+        );
+
+
+    answerContent.style.whiteSpace =
+        "pre-wrap";
+
+
+    answerContent.style.marginTop =
+        "7px";
+
+
+    answerContent.style.lineHeight =
+        "1.8";
+
+
+    answerContent.textContent =
+        q.answer || "暂无参考答案";
+
+
+    answerElement.appendChild(
+        answerContent
+    );
+
+
+    result.appendChild(
+        answerElement
+    );
+
+
+    /*
+     * 如果有解析则显示解析
+     */
+
+    if (q.analysis) {
+
+
+        const analysis =
+            document.createElement(
+                "div"
+            );
+
+
+        analysis.className =
+            "analysis";
+
+
+        const title =
+            document.createElement(
+                "b"
+            );
+
+
+        title.textContent =
+            "解析：";
+
+
+        const content =
+            document.createElement(
+                "div"
+            );
+
+
+        content.className =
+            "analysis-content";
+
+
+        content.textContent =
+            q.analysis;
+
+
+        analysis.appendChild(
+            title
+        );
+
+
+        analysis.appendChild(
+            content
+        );
+
+
+        result.appendChild(
+            analysis
+        );
+
+    }
+
+
+    /*
+     * 防止重复点击
+     */
+
+    document.getElementById(
+        "submitButton"
+    ).disabled =
+        true;
+
+}
 
 /* =====================================================
    提交答案
@@ -1458,6 +1947,32 @@ function submitAnswer() {
 
     const q =
         currentQuestions[current];
+    /*
+     * =====================================
+     * 简答题：
+     * 不自动判分
+     * 不进入错题本
+     * 只显示参考答案
+     * =====================================
+     */
+
+    if (q.type === "简答题") {
+
+
+        showEssayAnswer(q);
+
+
+        return;
+
+    }
+
+
+    /*
+     * =====================================
+     * 以下继续保留你原来的
+     * 单选 / 多选 / 填空题逻辑
+     * =====================================
+     */
 
 
     const selected =
