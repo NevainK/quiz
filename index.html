@@ -230,6 +230,33 @@ c<!DOCTYPE html>
             color: #b00020;
         }
 
+        .favorite {
+
+            background: #fff3cd;
+
+            color: #8a5a00;
+        }
+
+        .favorite-toggle {
+
+            padding: 5px 9px;
+
+            margin: 0 0 12px 8px;
+
+            background: #f0f0f0;
+
+            color: #666;
+
+            font-size: 13px;
+        }
+
+        .favorite-toggle.active {
+
+            background: #fff3cd;
+
+            color: #8a5a00;
+        }
+
         .success {
 
             background: #e7f7ea;
@@ -441,9 +468,18 @@ c<!DOCTYPE html>
 
 
                 <button
+                    class="favorite"
+                    onclick="startFavoriteMode()">
+
+                    收藏练习
+
+                </button>
+
+
+                <button
                     class="secondary"
-                    onclick="exitWrongMode()"
-                    id="exitWrongButton"
+                    onclick="exitPracticeMode()"
+                    id="exitPracticeButton"
                     style="display:none">
 
                     返回全部题目
@@ -505,6 +541,23 @@ c<!DOCTYPE html>
 
                 </div>
 
+
+                <div class="stats-item">
+
+                    <span
+                        class="stats-number"
+                        id="favoriteCount">
+
+                        0
+
+                    </span>
+
+                    <span class="stats-label">
+                        收藏
+                    </span>
+
+                </div>
+
             </div>
 
         </div>
@@ -545,6 +598,16 @@ c<!DOCTYPE html>
                 id="wrongTag"
                 class="wrong-tag">
             </span>
+
+
+            <button
+                class="favorite-toggle"
+                id="favoriteButton"
+                onclick="toggleFavorite()">
+
+                ☆ 收藏
+
+            </button>
 
 
             <div
@@ -643,7 +706,7 @@ let currentBank = "";
 
 let currentBankName = "";
 
-let wrongMode = false;
+let practiceMode = "all";
 
 
 /* =====================================================
@@ -879,12 +942,12 @@ async function loadQuestionBank(bank) {
             bank.name;
 
 
-        wrongMode =
-            false;
+        practiceMode =
+            "all";
 
 
         document.getElementById(
-            "exitWrongButton"
+            "exitPracticeButton"
         ).style.display =
             "none";
 
@@ -986,7 +1049,7 @@ function showQuizPage() {
 function backToBanks() {
 
 
-    wrongMode = false;
+    practiceMode = "all";
 
 
     questions = [];
@@ -1032,6 +1095,16 @@ function wrongKey() {
 
     return (
         "wrong_" +
+        currentBank
+    );
+
+}
+
+
+function favoriteKey() {
+
+    return (
+        "favorite_" +
         currentBank
     );
 
@@ -1268,6 +1341,56 @@ function isReferenceOnlyQuestion(q) {
 }
 
 
+/* =====================================================
+   收藏题目记录
+===================================================== */
+
+
+function getFavoriteQuestions() {
+
+
+    try {
+
+        return new Set(
+
+            JSON.parse(
+
+                localStorage.getItem(
+                    favoriteKey()
+                ) || "[]"
+
+            )
+
+        );
+
+    }
+    catch {
+
+        return new Set();
+
+    }
+
+}
+
+
+function saveFavoriteQuestions(
+    favoriteSet
+) {
+
+
+    localStorage.setItem(
+
+        favoriteKey(),
+
+        JSON.stringify(
+            [...favoriteSet]
+        )
+
+    );
+
+}
+
+
 function populateQuestionSelector() {
 
     const select =
@@ -1304,7 +1427,7 @@ function populateQuestionSelector() {
 
 
             option.textContent =
-                wrongMode
+                practiceMode !== "all"
 
                 ? `原题第 ${questionNumber} 题`
 
@@ -1505,15 +1628,15 @@ function renderQuestion() {
         "progress"
     ).textContent =
 
-        wrongMode
+        practiceMode === "wrong"
 
-        ?
+        ? `错题练习：第 ${current + 1} / ${currentQuestions.length} 题`
 
-        `错题练习：第 ${current + 1} / ${currentQuestions.length} 题`
+        : practiceMode === "favorite"
 
-        :
+        ? `收藏练习：第 ${current + 1} / ${currentQuestions.length} 题`
 
-        `第 ${current + 1} / ${currentQuestions.length} 题`;
+        : `第 ${current + 1} / ${currentQuestions.length} 题`;
 
 
     document.getElementById(
@@ -1570,6 +1693,34 @@ function renderQuestion() {
         :
 
         "";
+
+
+    const favoriteSet =
+        getFavoriteQuestions();
+
+
+    const favoriteButton =
+        document.getElementById(
+            "favoriteButton"
+        );
+
+
+    const isFavorite =
+        favoriteSet.has(id);
+
+
+    favoriteButton.textContent =
+        isFavorite
+
+        ? "★ 已收藏"
+
+        : "☆ 收藏";
+
+
+    favoriteButton.classList.toggle(
+        "active",
+        isFavorite
+    );
 
 
     /*
@@ -1756,7 +1907,7 @@ function renderQuestion() {
      */
 
 
-    if (!wrongMode) {
+    if (practiceMode === "all") {
 
         localStorage.setItem(
 
@@ -2277,6 +2428,79 @@ function submitAnswer() {
 }
 
 
+/* =====================================================
+   收藏 / 取消收藏当前题目
+===================================================== */
+
+
+function toggleFavorite() {
+
+
+    if (currentQuestions.length === 0) {
+
+        return;
+
+    }
+
+
+    const question =
+        currentQuestions[current];
+
+
+    const id =
+        getQuestionId(question);
+
+
+    const favoriteSet =
+        getFavoriteQuestions();
+
+
+    if (favoriteSet.has(id)) {
+
+        favoriteSet.delete(id);
+
+    }
+    else {
+
+        favoriteSet.add(id);
+
+    }
+
+
+    saveFavoriteQuestions(
+        favoriteSet
+    );
+
+
+    const isFavorite =
+        favoriteSet.has(id);
+
+
+    const favoriteButton =
+        document.getElementById(
+            "favoriteButton"
+        );
+
+
+    favoriteButton.textContent =
+        isFavorite
+
+        ? "★ 已收藏"
+
+        : "☆ 收藏";
+
+
+    favoriteButton.classList.toggle(
+        "active",
+        isFavorite
+    );
+
+
+    updateStats();
+
+}
+
+
 
 /* =====================================================
    下一题
@@ -2409,7 +2633,7 @@ function randomQuestion() {
 
 
 /* =====================================================
-   错题模式
+   错题 / 收藏练习模式
 ===================================================== */
 
 
@@ -2420,9 +2644,19 @@ function startWrongMode() {
         getWrongQuestions();
 
 
-    if (
-        wrongSet.size === 0
-    ) {
+    const wrongQuestions =
+
+        questions.filter(
+
+            question =>
+                wrongSet.has(
+                    getQuestionId(question)
+                )
+
+        );
+
+
+    if (wrongQuestions.length === 0) {
 
         alert(
             "当前题库暂无错题"
@@ -2433,24 +2667,37 @@ function startWrongMode() {
     }
 
 
-    const wrongQuestions =
+    enterPracticeMode(
+        "wrong",
+        wrongQuestions
+    );
+
+}
+
+
+function startFavoriteMode() {
+
+
+    const favoriteSet =
+        getFavoriteQuestions();
+
+
+    const favoriteQuestions =
 
         questions.filter(
 
-            q =>
-                wrongSet.has(
-                    getQuestionId(q)
+            question =>
+                favoriteSet.has(
+                    getQuestionId(question)
                 )
 
         );
 
 
-    if (
-        wrongQuestions.length === 0
-    ) {
+    if (favoriteQuestions.length === 0) {
 
         alert(
-            "暂无可练习错题"
+            "当前题库暂无收藏题目"
         );
 
         return;
@@ -2458,23 +2705,36 @@ function startWrongMode() {
     }
 
 
-    wrongMode =
-        true;
+    enterPracticeMode(
+        "favorite",
+        favoriteQuestions
+    );
+
+}
+
+
+function enterPracticeMode(
+    mode,
+    filteredQuestions
+) {
+
+
+    practiceMode =
+        mode;
 
 
     currentQuestions =
-        wrongQuestions;
+        filteredQuestions;
+
+
+    current = 0;
 
 
     populateQuestionSelector();
 
 
-    current =
-        0;
-
-
     document.getElementById(
-        "exitWrongButton"
+        "exitPracticeButton"
     ).style.display =
         "inline-block";
 
@@ -2484,24 +2744,15 @@ function startWrongMode() {
 }
 
 
-
-/* =====================================================
-   退出错题模式
-===================================================== */
+function exitPracticeMode() {
 
 
-function exitWrongMode() {
-
-
-    wrongMode =
-        false;
+    practiceMode =
+        "all";
 
 
     currentQuestions =
         questions;
-
-
-    populateQuestionSelector();
 
 
     current =
@@ -2515,8 +2766,9 @@ function exitWrongMode() {
 
 
     if (
-        current >=
-        currentQuestions.length
+        current < 0
+        ||
+        current >= currentQuestions.length
     ) {
 
         current = 0;
@@ -2524,8 +2776,11 @@ function exitWrongMode() {
     }
 
 
+    populateQuestionSelector();
+
+
     document.getElementById(
-        "exitWrongButton"
+        "exitPracticeButton"
     ).style.display =
         "none";
 
@@ -2556,6 +2811,10 @@ function updateStats() {
         getWrongQuestions();
 
 
+    const favorite =
+        getFavoriteQuestions();
+
+
     document.getElementById(
         "doneCount"
     ).textContent =
@@ -2572,6 +2831,12 @@ function updateStats() {
         "wrongCount"
     ).textContent =
         wrong.size;
+
+
+    document.getElementById(
+        "favoriteCount"
+    ).textContent =
+        favorite.size;
 
 }
 
