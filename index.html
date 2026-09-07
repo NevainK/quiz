@@ -101,6 +101,38 @@ c<!DOCTYPE html>
             margin-bottom: 10px;
         }
 
+        .question-jump {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 14px;
+
+            color: #666;
+
+            font-size: 14px;
+        }
+
+        .question-jump select {
+
+            min-width: 120px;
+
+            padding: 8px 10px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: #222;
+
+            font-size: 15px;
+        }
+
         .type {
 
             display: inline-block;
@@ -489,6 +521,20 @@ c<!DOCTYPE html>
             </div>
 
 
+            <div class="question-jump">
+
+                <label for="questionSelect">
+                    快速跳题
+                </label>
+
+                <select
+                    id="questionSelect"
+                    onchange="jumpToQuestion(this.value)">
+                </select>
+
+            </div>
+
+
             <div
                 class="type"
                 id="type">
@@ -820,6 +866,9 @@ async function loadQuestionBank(bank) {
 
         currentQuestions =
             questions;
+
+
+        populateQuestionSelector();
 
 
         currentBank =
@@ -1219,6 +1268,88 @@ function isReferenceOnlyQuestion(q) {
 }
 
 
+function populateQuestionSelector() {
+
+    const select =
+        document.getElementById(
+            "questionSelect"
+        );
+
+
+    select.innerHTML = "";
+
+
+    currentQuestions.forEach(
+
+        (question, index) => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                String(index);
+
+
+            const questionNumber =
+                question.number !== undefined
+                &&
+                question.number !== null
+
+                ? question.number
+
+                : index + 1;
+
+
+            option.textContent =
+                wrongMode
+
+                ? `原题第 ${questionNumber} 题`
+
+                : `第 ${questionNumber} 题`;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+
+    );
+
+}
+
+
+function jumpToQuestion(value) {
+
+    const targetIndex =
+        Number(value);
+
+
+    if (
+        !Number.isInteger(targetIndex)
+        ||
+        targetIndex < 0
+        ||
+        targetIndex >= currentQuestions.length
+    ) {
+
+        return;
+
+    }
+
+
+    current =
+        targetIndex;
+
+
+    renderQuestion();
+
+}
+
+
 
 
 /* =====================================================
@@ -1383,6 +1514,12 @@ function renderQuestion() {
         :
 
         `第 ${current + 1} / ${currentQuestions.length} 题`;
+
+
+    document.getElementById(
+        "questionSelect"
+    ).value =
+        String(current);
 
 
     /*
@@ -2329,6 +2466,9 @@ function startWrongMode() {
         wrongQuestions;
 
 
+    populateQuestionSelector();
+
+
     current =
         0;
 
@@ -2359,6 +2499,9 @@ function exitWrongMode() {
 
     currentQuestions =
         questions;
+
+
+    populateQuestionSelector();
 
 
     current =
