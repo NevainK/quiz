@@ -1208,6 +1208,17 @@ function getQuestionMaterial(q) {
 }
 
 
+function isReferenceOnlyQuestion(q) {
+
+    return (
+        q.type === "简答题"
+        ||
+        q.type === "填空题"
+    );
+
+}
+
+
 
 
 /* =====================================================
@@ -1439,17 +1450,8 @@ function renderQuestion() {
         "";
 
 
-    /*
-     * 判断文字作答题
-     */
-
-    const isTextQuestion =
-
-        q.type === "简答题"
-
-        ||
-
-        q.type === "填空题";
+    const isReferenceOnly =
+        isReferenceOnlyQuestion(q);
 
 
     /*
@@ -1460,7 +1462,7 @@ function renderQuestion() {
 
     const isMulti =
 
-        !isTextQuestion
+        !isReferenceOnly
 
         &&
 
@@ -1480,97 +1482,7 @@ function renderQuestion() {
         );
 
 
-    /*
-     * ===============================
-     * 简答题 / 填空题
-     * ===============================
-     */
-
-    if (isTextQuestion) {
-
-
-        const textarea =
-            document.createElement(
-                "textarea"
-            );
-
-
-        textarea.id =
-            "textAnswer";
-
-
-        textarea.placeholder =
-
-            q.type === "填空题"
-
-            ?
-
-            "请输入答案"
-
-            :
-
-            "请输入你的答案";
-
-
-        textarea.style.width =
-            "100%";
-
-
-        textarea.style.minHeight =
-
-            q.type === "填空题"
-
-            ?
-
-            "55px"
-
-            :
-
-            "130px";
-
-
-        textarea.style.padding =
-            "12px";
-
-
-        textarea.style.border =
-            "1px solid #ddd";
-
-
-        textarea.style.borderRadius =
-            "9px";
-
-
-        textarea.style.fontSize =
-            "16px";
-
-
-        textarea.style.lineHeight =
-            "1.6";
-
-
-        textarea.style.resize =
-            "vertical";
-
-
-        textarea.style.fontFamily =
-            "inherit";
-
-
-        optionsContainer.appendChild(
-            textarea
-        );
-
-    }
-
-
-    /*
-     * ===============================
-     * 原来的选择题
-     * ===============================
-     */
-
-    else {
+    if (!isReferenceOnly) {
 
 
         q.options.forEach(
@@ -1662,6 +1574,15 @@ function renderQuestion() {
         "none";
 
 
+    result.className = "";
+
+
+    result.style.background = "";
+
+
+    result.style.border = "";
+
+
     result.innerHTML =
         "";
 
@@ -1679,10 +1600,7 @@ function renderQuestion() {
     submitButton.disabled = false;
 
 
-    /*
-     * 简答题只查看参考答案
-     */
-    if (q.type === "简答题") {
+    if (isReferenceOnly) {
 
         submitButton.textContent =
             "查看参考答案";
@@ -1722,7 +1640,7 @@ function renderQuestion() {
 }
 
 
-function showEssayAnswer(q) {
+function showReferenceAnswer(q) {
 
 
     const result =
@@ -1734,10 +1652,6 @@ function showEssayAnswer(q) {
     result.style.display =
         "block";
 
-
-    /*
-     * 简答题不使用 correct / wrong 样式
-     */
 
     result.className = "";
 
@@ -1755,68 +1669,6 @@ function showEssayAnswer(q) {
 
 
     /*
-     * 如果用户输入了自己的答案，
-     * 就顺便显示出来。
-     *
-     * 没输入也没关系。
-     */
-
-    const textAnswer =
-        document.getElementById(
-            "textAnswer"
-        );
-
-
-    const userAnswer =
-        textAnswer
-            ? textAnswer.value.trim()
-            : "";
-
-
-    if (userAnswer) {
-
-
-        const yourAnswer =
-            document.createElement(
-                "div"
-            );
-
-
-        yourAnswer.innerHTML =
-            "<b>你的答案：</b>";
-
-
-        const yourContent =
-            document.createElement(
-                "div"
-            );
-
-
-        yourContent.style.whiteSpace =
-            "pre-wrap";
-
-
-        yourContent.style.marginTop =
-            "7px";
-
-
-        yourContent.textContent =
-            userAnswer;
-
-
-        yourAnswer.appendChild(
-            yourContent
-        );
-
-
-        result.appendChild(
-            yourAnswer
-        );
-
-    }
-
-
-    /*
      * 参考答案
      */
 
@@ -1824,12 +1676,6 @@ function showEssayAnswer(q) {
         document.createElement(
             "div"
         );
-
-
-    answerElement.style.marginTop =
-        userAnswer
-            ? "15px"
-            : "0";
 
 
     answerElement.innerHTML =
@@ -1949,17 +1795,17 @@ function submitAnswer() {
         currentQuestions[current];
     /*
      * =====================================
-     * 简答题：
+     * 简答题 / 填空题：
      * 不自动判分
      * 不进入错题本
      * 只显示参考答案
      * =====================================
      */
 
-    if (q.type === "简答题") {
+    if (isReferenceOnlyQuestion(q)) {
 
 
-        showEssayAnswer(q);
+        showReferenceAnswer(q);
 
 
         return;
@@ -1970,7 +1816,7 @@ function submitAnswer() {
     /*
      * =====================================
      * 以下继续保留你原来的
-     * 单选 / 多选 / 填空题逻辑
+     * 单选 / 多选题逻辑
      * =====================================
      */
 
@@ -2602,7 +2448,7 @@ if (
     navigator
         .serviceWorker
         .register(
-            "./sw.js"
+            "./ws.js"
         )
         .catch(
             error =>

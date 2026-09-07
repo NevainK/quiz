@@ -8,7 +8,7 @@
   "failures": [
     {
       "number": 295,
-      "reason": "未出现可见的单题确定按钮"
+      "reason": "图片题，未出现可见的单题确定按钮"
     }
   ],
   "questions": [
